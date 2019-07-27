@@ -1,0 +1,10 @@
+disabled: true
+description: gpio_orangepi_out
+format: int
+retain: history
+calculate: avg_min_max
+service:
+  configuration:
+    pin: 4
+  mode: actuator
+  name: gpio_orangepi

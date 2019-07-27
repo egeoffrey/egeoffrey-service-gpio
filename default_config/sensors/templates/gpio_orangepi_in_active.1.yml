@@ -1,0 +1,13 @@
+disabled: true
+description: gpio_orangepi_in_active
+format: int
+retain: history
+calculate: avg_min_max
+service:
+  configuration:
+    pin: 2
+  mode: active
+  name: gpio_orangepi
+  schedule:
+    minutes: 10
+    trigger: interval

@@ -1,0 +1,13 @@
+disabled: true
+description: gpio_raspi_in_active
+format: int
+retain: history
+calculate: avg_min_max
+service:
+  configuration:
+    pin: 2
+  mode: active
+  name: gpio_raspi
+  schedule:
+    minutes: 10
+    trigger: interval
