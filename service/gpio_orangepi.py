@@ -19,12 +19,12 @@
 #   required: pin
 #   optional: edge_detect (rising|falling|both)
 
-import OPi.GPIO as GPIO
+import OPi.GPIO
 
 from gpio import Gpio
 
 class Gpio_orangepi(Gpio):
-    
+    gpio_object = OPi.GPIO
     # setup pull up/down resistor
     def get_pull_up_down(self, configuration):
         pass

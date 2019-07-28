@@ -19,12 +19,12 @@
 #   required: pin
 #   optional: edge_detect (rising|falling|both) , pull_up_down (up|down)
 
-import RPi.GPIO as GPIO
+import RPi.GPIO
 
 from gpio import Gpio
 
 class Gpio_raspi(Gpio):
-    
+    gpio_object = RPi.GPIO
     # setup pull up/down resistor
     def get_pull_up_down(self, configuration):
         if "pull_up_down" in configuration:

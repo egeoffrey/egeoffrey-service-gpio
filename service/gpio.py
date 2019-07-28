@@ -20,8 +20,8 @@ class Gpio(Service):
     def on_start(self):
         # request all sensors' configuration so to filter sensors of interest
         self.add_configuration_listener("sensors/#", 1)
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
+        self.gpio_object.setwarnings(False)
+        self.gpio_object.setmode(self.gpio_object.BCM)
     
     # What to do when shutting down
     def on_stop(self):
@@ -31,7 +31,7 @@ class Gpio(Service):
     def event_callback(self, pin):
         if pin not in self.pins: return
         sensor_id = self.pins[pin]
-        value = 1 if GPIO.input(pin) else 0
+        value = 1 if self.gpio_object.input(pin) else 0
         self.log_debug("GPIO input on pin "+str(pin)+" is now "+str(value))
         message = Message(self)
         message.recipient = "controller/hub"
@@ -52,8 +52,8 @@ class Gpio(Service):
             if self.cache.find(cache_key): 
                 data = self.cache.get(cache_key)
             else:
-                GPIO.setup(pin, GPIO.IN)
-                data = GPIO.input(pin)
+                self.gpio_object.setup(pin, self.gpio_object.IN)
+                data = self.gpio_object.input(pin)
                 self.cache.add(cache_key, data)
             # send the response back
             message.reply()
@@ -65,8 +65,8 @@ class Gpio(Service):
                 self.log_error("invalid value: "+str(data))
                 return
             self.log_info("setting GPIO pin "+str(pin)+" to "+str(data))
-            GPIO.setup(pin, GPIO.OUT)
-            GPIO.output(pin, data)
+            self.gpio_object.setup(pin, self.gpio_object.OUT)
+            self.gpio_object.output(pin, data)
     
     # setup pull up/down resistor
     def get_pull_up_down(self, configuration):
@@ -84,7 +84,7 @@ class Gpio(Service):
                 for pin in self.pins:
                     id = self.pins[pin]
                     if id != sensor_id: continue
-                    GPIO.remove_event_detect(pin)
+                    self.gpio_object.remove_event_detect(pin)
                     del self.pins[pin]
             # a sensor has been added/updated
             else: 
@@ -101,16 +101,16 @@ class Gpio(Service):
                     self.log_error("pin "+str(pin)+" already registered with sensor "+self.pins[pin])
                     return
                 if pin in self.pins:
-                    GPIO.remove_event_detect(pin)
+                    self.gpio_object.remove_event_detect(pin)
                 self.pins[pin] = sensor_id
                 # set pull up / down resistor
                 pull_up_down = self.get_pull_up_down(configuration)
-                if pull_up_down is not None: GPIO.setup(pin, GPIO.IN, pull_up_down=pull_up_down)
-                else: GPIO.setup(pin, GPIO.IN)
+                if pull_up_down is not None: self.gpio_object.setup(pin, self.gpio_object.IN, pull_up_down=pull_up_down)
+                else: self.gpio_object.setup(pin, self.gpio_object.IN)
                 # add callbacks
-                if edge_detect == "rising": GPIO.add_event_detect(pin, GPIO.RISING, callback=self.event_callback)
-                elif edge_detect == "falling": GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.event_callback)
-                elif edge_detect == "both": GPIO.add_event_detect(pin, GPIO.BOTH, callback=self.event_callback)
+                if edge_detect == "rising": self.gpio_object.add_event_detect(pin, self.gpio_object.RISING, callback=self.event_callback)
+                elif edge_detect == "falling": self.gpio_object.add_event_detect(pin, self.gpio_object.FALLING, callback=self.event_callback)
+                elif edge_detect == "both": self.gpio_object.add_event_detect(pin, self.gpio_object.BOTH, callback=self.event_callback)
                 else:
                     self.log_error("invalid edge_detect: "+edge_detect)
                     return

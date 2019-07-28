@@ -1,6 +1,6 @@
 manifest_schema: 1
 package: myhouse-service-gpio
-revision: 1
+revision: 2
 version: development
 github: myhouse-project/myhouse-service-gpio
 dockerhub: myhouseproject/myhouse-service-gpio
