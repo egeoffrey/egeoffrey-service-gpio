@@ -1,65 +1,66 @@
-manifest_schema: 1
-package: myhouse-service-gpio
-revision: 2
-version: development
-github: myhouse-project/myhouse-service-gpio
-dockerhub: myhouseproject/myhouse-service-gpio
+branch: development
 container_config:
   privileged: true
 description: Read/write from a GPIO pin
-tags: service gpio raspberrypi orangepi
+dockerhub: myhouseproject/myhouse-service-gpio
+github: myhouse-project/myhouse-service-gpio
+manifest_schema: 2
 modules:
-  - service/gpio_raspi:
-      description: Read/write from a GPIO pin (raspberrypi)
-      service_configuration: 
-        active:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
-        passive:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
-          - name: edge_detect
-            description: The triggering event
-            format: rising|falling|both
-            required: true
-          - name: pull_up_down
-            description: Set pull up/pull down resistor
-            format: up|down
-            required: false
-        actuator:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
-  - service/gpio_orangepi:
-      description: Read/write from a GPIO pin (orangepi)
-      service_configuration: 
-        active:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
-        passive:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
-          - name: edge_detect
-            description: The triggering event
-            format: rising|falling|both
-            required: true
-        actuator:
-          - name: pin
-            description: The pin of the GPIO to use (BCM)
-            format: int
-            placeholder: 2
-            required: true
+- service/gpio_raspi:
+    description: Read/write from a GPIO pin (raspberrypi)
+    service_configuration:
+      active:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      actuator:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      passive:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      - description: The triggering event
+        format: rising|falling|both
+        name: edge_detect
+        required: true
+      - description: Set pull up/pull down resistor
+        format: up|down
+        name: pull_up_down
+        required: false
+- service/gpio_orangepi:
+    description: Read/write from a GPIO pin (orangepi)
+    service_configuration:
+      active:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      actuator:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      passive:
+      - description: The pin of the GPIO to use (BCM)
+        format: int
+        name: pin
+        placeholder: 2
+        required: true
+      - description: The triggering event
+        format: rising|falling|both
+        name: edge_detect
+        required: true
+package: myhouse-service-gpio
+revision: 3
+tags: service gpio raspberrypi orangepi
+version: 1.0
