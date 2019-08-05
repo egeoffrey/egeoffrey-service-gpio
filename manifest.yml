@@ -4,6 +4,7 @@ container_config:
 description: Read/write from a GPIO pin
 dockerhub: myhouseproject/myhouse-service-gpio
 github: myhouse-project/myhouse-service-gpio
+icon: microchip
 manifest_schema: 2
 modules:
 - service/gpio_raspi:
@@ -61,6 +62,6 @@ modules:
         name: edge_detect
         required: true
 package: myhouse-service-gpio
-revision: 3
+revision: 4
 tags: service gpio raspberrypi orangepi
 version: 1.0
