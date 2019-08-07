@@ -2,8 +2,8 @@ branch: development
 container_config:
   privileged: true
 description: Read/write from a GPIO pin
-dockerhub: myhouseproject/myhouse-service-gpio
-github: myhouse-project/myhouse-service-gpio
+dockerhub: egeoffrey/egeoffrey-service-gpio
+github: egeoffrey/egeoffrey-service-gpio
 icon: microchip
 manifest_schema: 2
 modules:
@@ -61,7 +61,7 @@ modules:
         format: rising|falling|both
         name: edge_detect
         required: true
-package: myhouse-service-gpio
-revision: 4
+package: egeoffrey-service-gpio
+revision: 5
 tags: service gpio raspberrypi orangepi
 version: 1.0
