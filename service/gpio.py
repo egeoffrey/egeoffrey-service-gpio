@@ -18,8 +18,6 @@ class Gpio(Service):
         
     # What to do when running
     def on_start(self):
-        # request all sensors' configuration so to filter sensors of interest
-        self.add_configuration_listener("sensors/#", 1)
         self.gpio_object.setwarnings(False)
         self.gpio_object.setmode(self.gpio_object.BCM)
     
@@ -47,14 +45,8 @@ class Gpio(Service):
         if not self.is_valid_configuration(["pin"], message.get_data()): return
         pin = message.get("pin")
         if message.command == "IN":
-            # if the raw data is cached, take it from there, otherwise request the data and cache it
-            cache_key = "/".join([str(pin)])
-            if self.cache.find(cache_key): 
-                data = self.cache.get(cache_key)
-            else:
-                self.gpio_object.setup(pin, self.gpio_object.IN)
-                data = self.gpio_object.input(pin)
-                self.cache.add(cache_key, data)
+            self.gpio_object.setup(pin, self.gpio_object.IN)
+            data = self.gpio_object.input(pin)
             # send the response back
             message.reply()
             message.set("value", data)
@@ -72,46 +64,45 @@ class Gpio(Service):
     def get_pull_up_down(self, configuration):
         pass
 
-
     # What to do when receiving a new/updated configuration for this module    
     def on_configuration(self,message):
-        # sensors to register
+        # register/unregister the sensor
         if message.args.startswith("sensors/"):
-            sensor_id = message.args.replace("sensors/","")
-            sensor = message.get_data()
-            # a sensor has been deleted
-            if message.is_null:
-                for pin in self.pins:
-                    id = self.pins[pin]
-                    if id != sensor_id: continue
-                    self.gpio_object.remove_event_detect(pin)
-                    del self.pins[pin]
-            # a sensor has been added/updated
+            if message.is_null: 
+                sensor_id = self.unregister_sensor(message)
+                if sensor_id is not None:
+                    # remove any previously configured edge detection
+                    for pin in self.pins:
+                        id = self.pins[pin]
+                        if id != sensor_id: continue
+                        self.gpio_object.remove_event_detect(pin)
+                        del self.pins[pin]
             else: 
-                # filter in only relevant sensors
-                if "service" not in sensor or sensor["service"]["name"] != self.name or sensor["service"]["mode"] != "passive": return
-                if "edge_detect" not in sensor["service"]["configuration"]: return
-                # configuration settings
-                configuration = sensor["service"]["configuration"]
-                if not self.is_valid_configuration(["pin", "edge_detect"], configuration): return
-                pin = configuration["pin"]
-                edge_detect = configuration["edge_detect"]
-                # register the pin
-                if pin in self.pins and sensor_id != self.pins[pin]:
-                    self.log_error("pin "+str(pin)+" already registered with sensor "+self.pins[pin])
-                    return
-                if pin in self.pins:
-                    self.gpio_object.remove_event_detect(pin)
-                self.pins[pin] = sensor_id
-                # set pull up / down resistor
-                pull_up_down = self.get_pull_up_down(configuration)
-                if pull_up_down is not None: self.gpio_object.setup(pin, self.gpio_object.IN, pull_up_down=pull_up_down)
-                else: self.gpio_object.setup(pin, self.gpio_object.IN)
-                # add callbacks
-                if edge_detect == "rising": self.gpio_object.add_event_detect(pin, self.gpio_object.RISING, callback=self.event_callback)
-                elif edge_detect == "falling": self.gpio_object.add_event_detect(pin, self.gpio_object.FALLING, callback=self.event_callback)
-                elif edge_detect == "both": self.gpio_object.add_event_detect(pin, self.gpio_object.BOTH, callback=self.event_callback)
-                else:
-                    self.log_error("invalid edge_detect: "+edge_detect)
-                    return
-                self.log_debug("registered sensor "+sensor_id)
+                sensor_id = self.register_sensor(message, ["pin"])
+                if sensor_id is not None:
+                    sensor = message.get_data()
+                    # for passive sensors only we need to register the edge detection
+                    if sensor["service"]["mode"] == "passive":
+                        # configuration settings
+                        configuration = sensor["service"]["configuration"]
+                        if not self.is_valid_configuration(["edge_detect"], configuration): return
+                        pin = configuration["pin"]
+                        edge_detect = configuration["edge_detect"]
+                        # register the pin
+                        if pin in self.pins and sensor_id != self.pins[pin]:
+                            self.log_error("pin "+str(pin)+" already registered with sensor "+self.pins[pin])
+                            return
+                        if pin in self.pins:
+                            self.gpio_object.remove_event_detect(pin)
+                        self.pins[pin] = sensor_id
+                        # set pull up / down resistor
+                        pull_up_down = self.get_pull_up_down(configuration)
+                        if pull_up_down is not None: self.gpio_object.setup(pin, self.gpio_object.IN, pull_up_down=pull_up_down)
+                        else: self.gpio_object.setup(pin, self.gpio_object.IN)
+                        # add callbacks
+                        if edge_detect == "rising": self.gpio_object.add_event_detect(pin, self.gpio_object.RISING, callback=self.event_callback)
+                        elif edge_detect == "falling": self.gpio_object.add_event_detect(pin, self.gpio_object.FALLING, callback=self.event_callback)
+                        elif edge_detect == "both": self.gpio_object.add_event_detect(pin, self.gpio_object.BOTH, callback=self.event_callback)
+                        else:
+                            self.log_error("invalid edge_detect: "+edge_detect)
+                            return
