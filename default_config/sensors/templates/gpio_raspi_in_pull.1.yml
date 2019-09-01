@@ -6,7 +6,7 @@ calculate: avg_min_max
 service:
   configuration:
     pin: 2
-  mode: active
+  mode: pull
   name: gpio_raspi
   schedule:
     minutes: 10

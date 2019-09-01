@@ -1,5 +1,5 @@
 disabled: true
-description: gpio_raspi_in_passive
+description: gpio_orangepi_in_passive
 format: int
 retain: history
 calculate: avg_min_max
@@ -7,6 +7,5 @@ service:
   configuration:
     pin: 3
     edge_detect: both
-    pull_up_down: up
-  mode: passive
-  name: gpio_raspi
+  mode: push
+  name: gpio_orangepi

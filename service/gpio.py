@@ -81,8 +81,8 @@ class Gpio(Service):
                 sensor_id = self.register_sensor(message, ["pin"])
                 if sensor_id is not None:
                     sensor = message.get_data()
-                    # for passive sensors only we need to register the edge detection
-                    if sensor["service"]["mode"] == "passive":
+                    # for push sensors only we need to register the edge detection
+                    if sensor["service"]["mode"] == "push":
                         # configuration settings
                         configuration = sensor["service"]["configuration"]
                         if not self.is_valid_configuration(["edge_detect"], configuration): return
