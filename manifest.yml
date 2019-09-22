@@ -1,4 +1,4 @@
-branch: development
+branch: master
 container_config:
   privileged: true
 description: Read/write from a GPIO pin
@@ -62,6 +62,6 @@ modules:
         name: edge_detect
         required: true
 package: egeoffrey-service-gpio
-revision: 8
+revision: 9
 tags: service gpio raspberrypi orangepi
 version: 1.0
