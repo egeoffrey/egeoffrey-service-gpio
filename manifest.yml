@@ -62,6 +62,6 @@ modules:
         name: edge_detect
         required: true
 package: egeoffrey-service-gpio
-revision: 9
+revision: 10
 tags: service gpio raspberrypi orangepi
 version: 1.0
