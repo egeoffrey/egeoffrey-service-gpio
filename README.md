@@ -78,4 +78,4 @@ service gpio raspberrypi orangepi
 
 ## Version
 
-The version of this egeoffrey-service-gpio is 1.0-11 on the master branch.
+The version of this egeoffrey-service-gpio is 1.1-1 on the master branch.
